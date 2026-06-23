@@ -6,4 +6,12 @@ build-backend = "setuptools.build_meta"
 name = "thermorock"
 version = "0.1.0"
 description = "ThermoRock package"
-authors = [{ name = "Your Name" }]
+authors = [
+    {name = "Titus Joseph"}
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

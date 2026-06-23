@@ -1,0 +1,13 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Pytest
+.pytest_cache/
+
+# Package build metadata
+*.egg-info/
+
+# Virtual environments
+.env
+.venv
