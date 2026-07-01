@@ -1,3 +1,6 @@
+from .validation import validate_positive
+
+
 def thermal_diffusivity(k, rho, cp):
     """
     Calculate thermal diffusivity.
@@ -11,9 +14,14 @@ def thermal_diffusivity(k, rho, cp):
     cp : float
         Specific heat capacity (J/kgK)
 
-    Returns 
+    Returns
     -------
     float
         Thermal diffusivity (m²/s)
     """
+
+    validate_positive(k, "Thermal conductivity")
+    validate_positive(rho, "Density")
+    validate_positive(cp, "Specific heat capacity")
+
     return k / (rho * cp)
