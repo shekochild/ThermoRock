@@ -11,6 +11,7 @@ from .validation import validate_positive_inputs
 
 
 def geothermal_gradient(
+    *,
     surface_temperature,
     reservoir_temperature,
     depth,
@@ -49,6 +50,7 @@ def geothermal_gradient(
 
 
 def temperature_at_depth(
+    *,
     surface_temperature,
     geothermal_gradient,
     depth,
