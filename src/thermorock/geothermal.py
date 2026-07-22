@@ -1,3 +1,4 @@
+import pytest
 """
 Functions for analytical geothermal calculations.
 
