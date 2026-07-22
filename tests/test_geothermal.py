@@ -3,6 +3,7 @@ import pytest
 from thermorock.geothermal import (
     geothermal_gradient,
     temperature_at_depth,
+    heat_flow,
 )
 
 def test_geothermal_gradient():
@@ -84,3 +85,35 @@ def test_temperature_at_depth_non_numeric_depth():
             geothermal_gradient=30,
             depth="three",
         )              
+
+def test_heat_flow():
+    assert heat_flow(
+        thermal_conductivity=2.5,
+        geothermal_gradient=30,
+    ) == pytest.approx(75.0)
+def test_heat_flow_zero_thermal_conductivity():
+    with pytest.raises(ValueError):
+        heat_flow(
+            thermal_conductivity=0,
+            geothermal_gradient=30,
+        )
+def test_heat_flow_zero_geothermal_gradient():
+    with pytest.raises(ValueError):
+        heat_flow(
+            thermal_conductivity=2.5,
+            geothermal_gradient=0,
+        )
+def test_heat_flow_non_numeric_input():
+    with pytest.raises(TypeError):
+        heat_flow(
+            thermal_conductivity="high",
+            geothermal_gradient=30,
+        )
+def test_heat_flow_negative_thermal_conductivity():
+    """Test that a negative thermal conductivity raises a ValueError."""
+
+    with pytest.raises(ValueError):
+        heat_flow(
+            thermal_conductivity=-2.5,
+            geothermal_gradient=30,
+        )

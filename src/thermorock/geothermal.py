@@ -1,4 +1,4 @@
-import pytest
+
 """
 Functions for analytical geothermal calculations.
 
@@ -49,6 +49,7 @@ def geothermal_gradient(
     return gradient
 
 
+
 def temperature_at_depth(
     *,
     surface_temperature,
@@ -83,10 +84,53 @@ def temperature_at_depth(
         geothermal_gradient=geothermal_gradient,
         depth=depth,
     )
-
+    
+ 
     temperature = (
         surface_temperature
         + geothermal_gradient * depth
     )
 
     return temperature
+
+
+def heat_flow(
+    *,
+    thermal_conductivity,
+    geothermal_gradient,
+):
+    """
+    Calculate conductive heat flow using Fourier's Law.
+
+    Parameters
+    ----------
+    thermal_conductivity : float
+        Thermal conductivity in W/(m·K).
+    geothermal_gradient : float
+        Geothermal gradient in °C/km.
+
+    Returns
+    -------
+    float
+        Conductive heat flow in mW/m².
+
+    Raises
+    ------
+    TypeError
+        If any input is not numeric.
+    ValueError
+        If any input is zero or negative.
+    """
+    validate_positive_inputs(
+        thermal_conductivity=thermal_conductivity,
+        geothermal_gradient=geothermal_gradient,
+    )
+
+    gradient_k_per_m = geothermal_gradient / 1000
+
+    heat_flow_value= (
+        thermal_conductivity
+        * gradient_k_per_m
+    )
+
+    return heat_flow_value * 1000
