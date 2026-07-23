@@ -110,7 +110,7 @@ def heat_flow(
         Geothermal gradient in °C/km.
 
     Returns
-    -------
+    -------z
     float
         Conductive heat flow in mW/m².
 
