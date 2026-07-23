@@ -97,7 +97,6 @@ class Subsurface:
         Return the number of layers.
         """
         return len(self.layers)
-
     def total_depth(self) -> float:
         """
         Return the maximum depth of the subsurface.
@@ -106,6 +105,35 @@ class Subsurface:
             return 0.0
 
         return max(layer.bottom_depth for layer in self.layers)
+
+    def get_layer_at_depth(self, depth: float) -> Layer:
+        """
+        Return the geological layer containing the specified depth.
+
+        Parameters
+        ----------
+        depth : float
+            Depth below the surface (m).
+
+        Returns
+        -------
+        Layer
+            The layer containing the specified depth.
+
+        Raises
+        ------
+        ValueError
+            If no layer contains the specified depth.
+        """
+
+        if depth < 0:
+            raise ValueError("Depth must be non-negative.")
+
+        for layer in self.layers:
+            if layer.top_depth <= depth < layer.bottom_depth:
+                return layer
+
+        raise ValueError(f"No layer found at depth {depth} m.")
 
     def validate(self):
         """

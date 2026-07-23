@@ -141,3 +141,4 @@ class TestSubsurface:
 
         with pytest.raises(TypeError):
             model.add_layer("not a layer")
+            
