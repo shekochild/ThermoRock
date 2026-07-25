@@ -15,3 +15,31 @@ def test_get_rock_at_depth_not_found(self, sandstone):
 
     with pytest.raises(ValueError):
         model.get_rock_at_depth(1000)
+ def test_default_thermal_properties(self):
+    """Test default thermal properties."""
+
+    model = Subsurface()
+
+    assert model.surface_temperature == 10.0
+    assert model.geothermal_gradient == 30.0
+
+
+def test_custom_thermal_properties(self):
+    """Test custom thermal properties."""
+
+    model = Subsurface(
+        surface_temperature=15.0,
+        geothermal_gradient=35.0,
+    )
+
+    assert model.surface_temperature == 15.0
+    assert model.geothermal_gradient == 35.0
+
+
+def test_invalid_geothermal_gradient(self):
+    """Test invalid geothermal gradient."""
+
+    with pytest.raises(ValueError):
+        Subsurface(
+            geothermal_gradient=0
+        )       

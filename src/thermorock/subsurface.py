@@ -71,11 +71,35 @@ class Layer:
 class Subsurface:
     """
     Represents a layered geological subsurface.
-    """
 
-    def __init__(self):
-        """Initialize an empty subsurface."""
+    """
+    
+    def __init__(
+        self,
+        surface_temperature: float = 10.0,
+        geothermal_gradient: float = 30.0,
+    ):
+        """
+        Initialize a layered subsurface model.
+
+        Parameters
+        ----------
+        surface_temperature : float, optional
+            Surface temperature in °C.
+
+        geothermal_gradient : float, optional
+            Geothermal gradient in °C/km.
+        """
+
+        if geothermal_gradient <= 0:
+            raise ValueError(
+                "geothermal_gradient must be positive."
+            )
+
         self.layers = []
+
+        self.surface_temperature = surface_temperature
+        self.geothermal_gradient = geothermal_gradient
 
     def add_layer(self, layer: Layer):
         """

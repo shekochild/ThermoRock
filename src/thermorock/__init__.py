@@ -16,7 +16,6 @@ from .validation import (
     validate_positive,
     validate_positive_inputs,
 )
-
 __all__ = [
     "get_rock_properties",
     "thermal_diffusivity",
@@ -26,4 +25,9 @@ __all__ = [
     "validate_positive",
     "validate_positive_inputs",
     "validate_property_range",
+    "Rock",
+    "Layer",
+    "Subsurface",
 ]
+
+from .subsurface import Rock, Layer, Subsurface
