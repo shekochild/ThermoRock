@@ -12,10 +12,12 @@ from .geothermal import (
     heat_flow,
 )
 from .range_validation import validate_property_range
+from .subsurface import Rock, Layer, Subsurface
 from .validation import (
     validate_positive,
     validate_positive_inputs,
 )
+
 __all__ = [
     "get_rock_properties",
     "thermal_diffusivity",
@@ -29,5 +31,3 @@ __all__ = [
     "Layer",
     "Subsurface",
 ]
-
-from .subsurface import Rock, Layer, Subsurface
