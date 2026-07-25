@@ -214,3 +214,47 @@ class TestSubsurface:
         model = Subsurface()
 
         assert model.temperature_profile([]) == []
+    
+    def test_heterogeneous_temperature(self, sandstone):
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(
+                0,
+                1000,
+                sandstone,
+                geothermal_gradient=20,
+            )
+        )
+
+        model.add_layer(
+            Layer(
+                1000,
+                2000,
+                sandstone,
+                geothermal_gradient=40,
+            )
+        )
+
+        assert (
+            model.heterogeneous_temperature_at_depth(
+                1500
+            )
+            == 50.0
+        )
+
+    def test_heterogeneous_negative_depth(
+        self,
+        sandstone,
+    ):
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        with pytest.raises(ValueError):
+            model.heterogeneous_temperature_at_depth(
+                -100
+            )
+        

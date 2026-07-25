@@ -45,7 +45,7 @@ class Layer:
     top_depth: float
     bottom_depth: float
     rock: Rock
-
+    geothermal_gradient: float = 30.0
     def __post_init__(self):
         """Validate layer geometry."""
 
@@ -55,6 +55,11 @@ class Layer:
         if self.bottom_depth <= self.top_depth:
             raise ValueError(
                 "bottom_depth must be greater than top_depth."
+            )
+
+        if self.geothermal_gradient <= 0:
+            raise ValueError(
+                "geothermal_gradient must be positive."
             )
 
         if not isinstance(self.rock, Rock):
@@ -225,6 +230,63 @@ class Subsurface:
         ] 
         
         
+    def heterogeneous_temperature_at_depth(
+        self,
+        depth: float,
+    ) -> float:
+        """
+        Calculate the temperature at a specified depth using
+        layer-specific geothermal gradients.
+
+        Parameters
+        ----------
+        depth : float
+            Depth below the surface (m).
+
+        Returns
+        -------
+        float
+            Temperature (°C).
+        """
+
+        if depth < 0:
+            raise ValueError(
+                "Depth must be non-negative."
+            )
+
+        if depth > self.total_depth():
+            raise ValueError(
+                "Depth exceeds the subsurface model."
+            )
+
+        temperature = self.surface_temperature
+
+        for layer in sorted(
+            self.layers,
+            key=lambda layer: layer.top_depth,
+        ):
+
+            gradient = (
+                layer.geothermal_gradient / 1000
+            )
+
+            if depth >= layer.bottom_depth:
+
+                temperature += (
+                    layer.thickness * gradient
+                )
+
+            else:
+
+                temperature += (
+                    (depth - layer.top_depth)
+                    * gradient
+                )
+
+                break
+
+        return temperature     
+        
         
     def validate(self):
         """
@@ -254,26 +316,3 @@ class Subsurface:
                 layer.rock.name for layer in self.layers
             ],
         }
-
-    def temperature_profile(
-        self,
-        depths: list[float],
-    ) -> list[float]:
-        """
-        Calculate temperatures at multiple depths.
-
-        Parameters
-        ----------
-        depths : list[float]
-            Depths below the surface (m).
-
-        Returns
-        -------
-        list[float]
-            Temperatures (°C).
-        """
-
-        return [
-            self.temperature_at_depth(depth)
-            for depth in depths
-        ]
