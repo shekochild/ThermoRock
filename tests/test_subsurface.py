@@ -161,4 +161,29 @@ class TestSubsurface:
         model.add_layer(Layer(0, 500, sandstone))
 
         with pytest.raises(ValueError):
-            model.get_rock_at_depth(1000)            
+            model.get_rock_at_depth(1000)  
+            
+    def test_temperature_at_depth_default(self):
+        """Test temperature at depth using default thermal properties."""
+
+        model = Subsurface()
+
+        assert model.temperature_at_depth(1000) == 40.0
+
+    def test_temperature_at_depth_custom(self):
+        """Test temperature at depth using custom thermal properties."""
+
+        model = Subsurface(
+            surface_temperature=15,
+            geothermal_gradient=35,
+        )
+
+        assert model.temperature_at_depth(2000) == 85.0
+
+    def test_temperature_at_negative_depth(self):
+        """Test that negative depths are rejected."""
+
+        model = Subsurface()
+
+        with pytest.raises(ValueError):
+            model.temperature_at_depth(-100)                 

@@ -158,7 +158,74 @@ class Subsurface:
                 return layer
 
         raise ValueError(f"No layer found at depth {depth} m.")
+    
+    def get_rock_at_depth(self, depth: float) -> Rock:
+             """
+             Return the rock present at the specified depth.
+     
+             Parameters
+             ----------
+             depth : float
+                 Depth below the surface (m).
+     
+             Returns
+             -------
+             Rock
+                 The rock occupying the specified depth.
+             """
+             return self.get_layer_at_depth(depth).rock  
+    
+   
+    def temperature_at_depth(self, depth: float) -> float:
+        """
+        Calculate the temperature at a specified depth.
 
+        Parameters
+        ----------
+        depth : float
+            Depth below the surface (m).
+
+        Returns
+        -------
+        float
+            Temperature (°C).
+        """
+
+        if depth < 0:
+            raise ValueError("Depth must be non-negative.")
+
+        gradient_per_m = self.geothermal_gradient / 1000
+
+        return (
+            self.surface_temperature
+            + gradient_per_m * depth
+        )
+        
+    def temperature_profile(
+        self,
+        depths: list[float],
+    ) -> list[float]:
+        """
+        Calculate temperatures for multiple depths.
+
+        Parameters
+        ----------
+        depths : list[float]
+            Depths below the surface (m).
+
+        Returns
+        -------
+        list[float]
+            Temperatures (°C).
+        """
+
+        return [
+            self.temperature_at_depth(depth)
+            for depth in depths
+        ] 
+        
+        
+        
     def validate(self):
         """
         Validate the subsurface geometry.
@@ -187,18 +254,4 @@ class Subsurface:
                 layer.rock.name for layer in self.layers
             ],
         }
-    def get_rock_at_depth(self, depth: float) -> Rock:
-        """
-        Return the rock present at the specified depth.
-
-        Parameters
-        ----------
-        depth : float
-            Depth below the surface (m).
-
-        Returns
-        -------
-        Rock
-            The rock occupying the specified depth.
-        """
-        return self.get_layer_at_depth(depth).rock    
+    
