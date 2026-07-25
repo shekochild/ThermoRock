@@ -258,3 +258,38 @@ class TestSubsurface:
                 -100
             )
         
+        
+    def test_heterogeneous_temperature_profile(self, sandstone):
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(
+                0,
+                1000,
+                sandstone,
+                geothermal_gradient=20,
+            )
+        )
+
+        model.add_layer(
+            Layer(
+                1000,
+                2000,
+                sandstone,
+                geothermal_gradient=40,
+            )
+        )
+
+        profile = model.heterogeneous_temperature_profile(
+            [0, 1000, 1500, 2000]
+        )
+
+        assert profile == [10.0, 30.0, 50.0, 70.0]
+
+    def test_heterogeneous_temperature_profile_empty(self):
+        model = Subsurface()
+
+        assert (
+            model.heterogeneous_temperature_profile([])
+            == []
+        )    
