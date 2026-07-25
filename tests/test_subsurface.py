@@ -142,3 +142,23 @@ class TestSubsurface:
         with pytest.raises(TypeError):
             model.add_layer("not a layer")
             
+    def test_get_rock_at_depth_first_layer(self, sandstone):
+        """Test retrieving the rock at a valid depth."""
+
+        model = Subsurface()
+
+        model.add_layer(Layer(0, 500, sandstone))
+
+        rock = model.get_rock_at_depth(250)
+
+        assert rock.name == "Sandstone"
+
+    def test_get_rock_at_depth_not_found(self, sandstone):
+        """Test that an error is raised for depths outside the model."""
+
+        model = Subsurface()
+
+        model.add_layer(Layer(0, 500, sandstone))
+
+        with pytest.raises(ValueError):
+            model.get_rock_at_depth(1000)            

@@ -163,3 +163,18 @@ class Subsurface:
                 layer.rock.name for layer in self.layers
             ],
         }
+    def get_rock_at_depth(self, depth: float) -> Rock:
+        """
+        Return the rock present at the specified depth.
+
+        Parameters
+        ----------
+        depth : float
+            Depth below the surface (m).
+
+        Returns
+        -------
+        Rock
+            The rock occupying the specified depth.
+        """
+        return self.get_layer_at_depth(depth).rock    
