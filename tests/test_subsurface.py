@@ -293,3 +293,38 @@ class TestSubsurface:
             model.heterogeneous_temperature_profile([])
             == []
         )    
+        
+    def test_total_radiogenic_heat_production(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2300,
+            900,
+            1.5e-6,
+        )
+
+        granite = Rock(
+            "Granite",
+            3.0,
+            2700,
+            790,
+            3.0e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(Layer(0, 500, sandstone))
+        model.add_layer(Layer(500, 1500, granite))
+
+        assert (
+            model.total_radiogenic_heat_production()
+            == 4.5e-6
+        )
+
+    def test_total_radiogenic_heat_empty(self):
+        model = Subsurface()
+
+        assert (
+            model.total_radiogenic_heat_production()
+            == 0
+        )   

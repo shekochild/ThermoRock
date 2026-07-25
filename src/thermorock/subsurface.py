@@ -311,6 +311,22 @@ class Subsurface:
             for depth in depths
         ]    
         
+    def total_radiogenic_heat_production(self) -> float:
+        """
+        Calculate the total radiogenic heat production of
+        the subsurface.
+
+        Returns
+        -------
+        float
+            Total radiogenic heat production (W/m³).
+        """
+
+        return sum(
+            layer.rock.radiogenic_heat_production
+            for layer in self.layers
+        )    
+        
         
     def validate(self):
         """
