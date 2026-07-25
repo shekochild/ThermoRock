@@ -328,6 +328,54 @@ class Subsurface:
         )    
         
         
+    def integrated_radiogenic_heat_production(self) -> float:
+        """
+        Calculate the vertically integrated radiogenic heat
+        production of the subsurface.
+
+        Returns
+        -------
+        float
+            Integrated radiogenic heat production (W/m²).
+        """
+
+        return sum(
+            layer.rock.radiogenic_heat_production
+            * layer.thickness
+            for layer in self.layers
+        )
+        
+        
+        
+    def effective_thermal_conductivity(self) -> float:
+        """
+        Calculate the effective vertical thermal conductivity
+        of the layered subsurface.
+
+        Returns
+        -------
+        float
+            Effective thermal conductivity (W/m/K).
+        """
+
+        if not self.layers:
+            raise ValueError(
+                "Subsurface contains no layers."
+            )
+
+        total_thickness = sum(
+            layer.thickness
+            for layer in self.layers
+        )
+
+        total_resistance = sum(
+            layer.thickness
+            / layer.rock.thermal_conductivity
+            for layer in self.layers
+        )
+
+        return total_thickness / total_resistance    
+        
     def validate(self):
         """
         Validate the subsurface geometry.

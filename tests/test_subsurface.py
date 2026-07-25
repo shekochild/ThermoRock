@@ -328,3 +328,101 @@ class TestSubsurface:
             model.total_radiogenic_heat_production()
             == 0
         )   
+    def test_integrated_radiogenic_heat(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2300,
+            900,
+            2e-6,
+        )
+
+        shale = Rock(
+            "Shale",
+            1.8,
+            2500,
+            850,
+            1e-6,
+        )
+
+        granite = Rock(
+            "Granite",
+            3.0,
+            2700,
+            790,
+            4e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        model.add_layer(
+            Layer(1000, 2500, shale)
+        )
+
+        model.add_layer(
+            Layer(2500, 4000, granite)
+        )
+
+        expected = (
+            2e-6 * 1000 +
+            1e-6 * 1500 +
+            4e-6 * 1500
+        )
+
+        assert (
+            model.integrated_radiogenic_heat_production()
+            == expected
+        )   
+        
+    def test_effective_thermal_conductivity(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.0,
+            2300,
+            900,
+            2e-6,
+        )
+
+        shale = Rock(
+            "Shale",
+            1.0,
+            2500,
+            850,
+            1e-6,
+        )
+
+        granite = Rock(
+            "Granite",
+            4.0,
+            2700,
+            790,
+            4e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(Layer(0, 1000, sandstone))
+        model.add_layer(Layer(1000, 2000, shale))
+        model.add_layer(Layer(2000, 3000, granite))
+
+        expected = 3000 / (
+            1000 / 2.0
+            + 1000 / 1.0
+            + 1000 / 4.0
+        )
+
+        assert (
+            model.effective_thermal_conductivity()
+            == pytest.approx(expected)
+        )
+
+
+    def test_effective_thermal_conductivity_empty(self):
+        model = Subsurface()
+
+        with pytest.raises(ValueError):
+            model.effective_thermal_conductivity()    
