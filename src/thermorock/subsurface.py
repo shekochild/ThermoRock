@@ -254,4 +254,26 @@ class Subsurface:
                 layer.rock.name for layer in self.layers
             ],
         }
-    
+
+    def temperature_profile(
+        self,
+        depths: list[float],
+    ) -> list[float]:
+        """
+        Calculate temperatures at multiple depths.
+
+        Parameters
+        ----------
+        depths : list[float]
+            Depths below the surface (m).
+
+        Returns
+        -------
+        list[float]
+            Temperatures (°C).
+        """
+
+        return [
+            self.temperature_at_depth(depth)
+            for depth in depths
+        ]

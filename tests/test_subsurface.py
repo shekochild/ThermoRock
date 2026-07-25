@@ -186,4 +186,31 @@ class TestSubsurface:
         model = Subsurface()
 
         with pytest.raises(ValueError):
-            model.temperature_at_depth(-100)                 
+            model.temperature_at_depth(-100)  
+                           
+            
+    def test_temperature_profile_default(self):
+        model = Subsurface()
+
+        profile = model.temperature_profile(
+            [0, 1000, 2000]
+        )
+
+        assert profile == [10.0, 40.0, 70.0]
+
+    def test_temperature_profile_custom(self):
+        model = Subsurface(
+            surface_temperature=15,
+            geothermal_gradient=35,
+        )
+
+        profile = model.temperature_profile(
+            [0, 1000]
+        )
+
+        assert profile == [15.0, 50.0]
+
+    def test_temperature_profile_empty(self):
+        model = Subsurface()
+
+        assert model.temperature_profile([]) == []
