@@ -375,6 +375,45 @@ class Subsurface:
         )
 
         return total_thickness / total_resistance    
+     
+    def effective_thermal_diffusivity(self) -> float:
+        """
+        Calculate the effective thermal diffusivity of the
+        layered subsurface.
+
+        Returns
+        -------
+        float
+            Effective thermal diffusivity (m²/s).
+        """
+
+        if not self.layers:
+            raise ValueError(
+                "Subsurface contains no layers."
+            )
+
+        total_thickness = sum(
+            layer.thickness
+            for layer in self.layers
+        )
+
+        average_density = sum(
+            layer.thickness * layer.rock.density
+            for layer in self.layers
+        ) / total_thickness
+
+        average_heat_capacity = sum(
+            layer.thickness * layer.rock.heat_capacity
+            for layer in self.layers
+        ) / total_thickness
+
+        return (
+            self.effective_thermal_conductivity()
+            / (
+                average_density
+                * average_heat_capacity
+            )
+        )  
         
     def validate(self):
         """

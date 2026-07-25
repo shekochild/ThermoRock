@@ -426,3 +426,43 @@ class TestSubsurface:
 
         with pytest.raises(ValueError):
             model.effective_thermal_conductivity()    
+            
+            
+    def test_effective_thermal_diffusivity(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2500,
+            1000,
+            2e-6,
+        )
+
+        granite = Rock(
+            "Granite",
+            3.5,
+            2700,
+            800,
+            4e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        model.add_layer(
+            Layer(1000, 2000, granite)
+        )
+
+        diffusivity = (
+            model.effective_thermal_diffusivity()
+        )
+
+        assert diffusivity > 0
+
+    def test_effective_thermal_diffusivity_empty(self):
+        model = Subsurface()
+
+        with pytest.raises(ValueError):
+            model.effective_thermal_diffusivity()        
