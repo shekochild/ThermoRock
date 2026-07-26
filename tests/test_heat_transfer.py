@@ -93,4 +93,27 @@ class TestHeatTransferSolver:
         assert (
             solver.steady_state_temperature_profile([])
             == []
-        )        
+        )     
+        
+    def test_steady_state_distribution(self, model):
+        solver = HeatTransferSolver(model)
+
+        depths, temperatures = (
+            solver.steady_state_distribution(
+                depth_interval=500
+            )
+        )
+
+        assert len(depths) == len(temperatures)
+
+        assert depths[0] == 0
+        assert temperatures[0] == 10.0
+
+
+    def test_invalid_depth_interval(self, model):
+        solver = HeatTransferSolver(model)
+
+        with pytest.raises(ValueError):
+            solver.steady_state_distribution(
+                depth_interval=0
+            )    

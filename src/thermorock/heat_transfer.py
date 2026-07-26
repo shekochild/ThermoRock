@@ -66,3 +66,48 @@ class HeatTransferSolver:
             self.subsurface.temperature_at_depth(depth)
             for depth in depths
         ]
+        
+        
+    def steady_state_distribution(
+        self,
+        depth_interval: float = 100,
+    ) -> tuple[list[float], list[float]]:
+        """
+        Calculate a steady-state temperature distribution.
+
+        Parameters
+        ----------
+        depth_interval : float, optional
+            Distance between calculated depths (m).
+
+        Returns
+        -------
+        tuple[list[float], list[float]]
+            Depths and temperatures.
+        """
+
+        if depth_interval <= 0:
+            raise ValueError(
+                "depth_interval must be positive."
+            )
+
+        maximum_depth = self.subsurface.total_depth()
+
+        depths = []
+
+        depth = 0.0
+
+        while depth <= maximum_depth:
+            depths.append(depth)
+            depth += depth_interval
+
+        temperatures = (
+            self.steady_state_temperature_profile(
+                depths
+            )
+        )
+
+        return depths, temperatures 
+        
+        
+        
