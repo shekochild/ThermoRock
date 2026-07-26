@@ -237,3 +237,60 @@ class TestGeothermalAnalysis:
                 recovery_factor=0.2,
                 conversion_efficiency=1.2,
             )       
+     
+     
+    def test_geothermal_potential(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2300,
+            900,
+            2e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        analysis = GeothermalAnalysis(model)
+
+        potential = analysis.geothermal_potential(
+            reservoir_area=1000,
+            recovery_factor=0.2,
+            conversion_efficiency=0.8,
+        )
+
+        assert potential in (
+            "Low",
+            "Moderate",
+            "High",
+        )
+
+
+    def test_geothermal_potential_returns_string(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2300,
+            900,
+            2e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        analysis = GeothermalAnalysis(model)
+
+        assert isinstance(
+            analysis.geothermal_potential(
+                1000,
+                0.2,
+                0.8,
+            ),
+            str,
+        )        

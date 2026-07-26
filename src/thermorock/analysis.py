@@ -180,3 +180,43 @@ class GeothermalAnalysis:
             )
             * conversion_efficiency
         )    
+        
+    def geothermal_potential(
+        self,
+        reservoir_area: float,
+        recovery_factor: float,
+        conversion_efficiency: float,
+    ) -> str:
+        """
+        Classify the geothermal potential of the reservoir.
+
+        Parameters
+        ----------
+        reservoir_area : float
+            Reservoir area (m²).
+
+        recovery_factor : float
+            Fraction of recoverable heat.
+
+        conversion_efficiency : float
+            Fraction of heat converted into usable energy.
+
+        Returns
+        -------
+        str
+            Geothermal potential classification.
+        """
+
+        energy = self.recoverable_energy(
+            reservoir_area,
+            recovery_factor,
+            conversion_efficiency,
+        )
+
+        if energy < 1e12:
+            return "Low"
+
+        if energy < 1e14:
+            return "Moderate"
+
+        return "High"
