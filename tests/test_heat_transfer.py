@@ -72,3 +72,25 @@ class TestHeatTransferSolver:
                 model,
                 basal_heat_flow=0,
             )        
+            
+    def test_steady_state_temperature_profile(self, model):
+        solver = HeatTransferSolver(model)
+
+        profile = solver.steady_state_temperature_profile(
+            [0, 500, 1000]
+        )
+
+        assert len(profile) == 3
+
+        assert profile[0] == 10.0
+        assert profile[1] == 25.0
+        assert profile[2] == 40.0
+
+
+    def test_empty_temperature_profile(self, model):
+        solver = HeatTransferSolver(model)
+
+        assert (
+            solver.steady_state_temperature_profile([])
+            == []
+        )        

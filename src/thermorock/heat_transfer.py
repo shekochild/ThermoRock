@@ -43,3 +43,26 @@ class HeatTransferSolver:
         self.subsurface = subsurface
         self.surface_temperature = surface_temperature
         self.basal_heat_flow = basal_heat_flow
+        
+    def steady_state_temperature_profile(
+        self,
+        depths: list[float],
+    ) -> list[float]:
+        """
+        Calculate the steady-state temperature profile.
+
+        Parameters
+        ----------
+        depths : list[float]
+            Depths below the surface (m).
+
+        Returns
+        -------
+        list[float]
+            Temperatures (°C).
+        """
+
+        return [
+            self.subsurface.temperature_at_depth(depth)
+            for depth in depths
+        ]
