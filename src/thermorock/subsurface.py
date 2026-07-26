@@ -430,7 +430,12 @@ class Subsurface:
             if layers[i].bottom_depth > layers[i + 1].top_depth:
                 raise ValueError(
                     "Layers overlap in the subsurface."
+                    
                 )
+            if layers[i].bottom_depth < layers[i + 1].top_depth:
+                raise ValueError(
+                    "Gap detected between geological layers."
+                )    
 
     def summary(self) -> dict:
         """

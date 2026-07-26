@@ -465,4 +465,32 @@ class TestSubsurface:
         model = Subsurface()
 
         with pytest.raises(ValueError):
-            model.effective_thermal_diffusivity()        
+            model.effective_thermal_diffusivity()  
+   
+    def test_gap_between_layers(self, sandstone):
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        model.add_layer(
+            Layer(1200, 2000, sandstone)
+        )
+
+        with pytest.raises(ValueError):
+            model.validate()
+
+
+    def test_continuous_layers(self, sandstone):
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        model.add_layer(
+            Layer(1000, 2000, sandstone)
+        )
+
+        model.validate()              
