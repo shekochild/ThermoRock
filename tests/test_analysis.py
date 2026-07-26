@@ -95,3 +95,47 @@ class TestGeothermalAnalysis:
         analysis = GeothermalAnalysis(model)
 
         assert analysis.total_heat_content() == 0        
+        
+    def test_heat_in_place(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2300,
+            900,
+            2e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        analysis = GeothermalAnalysis(model)
+
+        heat = analysis.heat_in_place(
+            reservoir_area=1000
+        )
+
+        assert heat > 0
+
+
+    def test_heat_in_place_invalid_area(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2300,
+            900,
+            2e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        analysis = GeothermalAnalysis(model)
+
+        with pytest.raises(ValueError):
+            analysis.heat_in_place(0)

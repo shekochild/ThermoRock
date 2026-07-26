@@ -78,4 +78,32 @@ class GeothermalAnalysis:
             for index in range(
                 self.subsurface.number_of_layers()
             )
-        )     
+        )   
+        
+    def heat_in_place(
+        self,
+        reservoir_area: float,
+    ) -> float:
+        """
+        Calculate the total heat in place.
+
+        Parameters
+        ----------
+        reservoir_area : float
+            Reservoir area (m²).
+
+        Returns
+        -------
+        float
+            Heat in place (J).
+        """
+
+        if reservoir_area <= 0:
+            raise ValueError(
+                "reservoir_area must be positive."
+            )
+
+        return (
+            self.total_heat_content()
+            * reservoir_area
+        )      
