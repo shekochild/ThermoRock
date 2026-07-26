@@ -46,6 +46,7 @@ class Layer:
     bottom_depth: float
     rock: Rock
     geothermal_gradient: float = 30.0
+
     def __post_init__(self):
         """Validate layer geometry."""
 
@@ -78,7 +79,11 @@ class Subsurface:
     Represents a layered geological subsurface.
 
     """
-    
+
+    # ==========================================================
+    # Initialization
+    # ==========================================================
+
     def __init__(
         self,
         surface_temperature: float = 10.0,
@@ -106,6 +111,10 @@ class Subsurface:
         self.surface_temperature = surface_temperature
         self.geothermal_gradient = geothermal_gradient
 
+    # ==========================================================
+    # Layer Management
+    # ==========================================================
+
     def add_layer(self, layer: Layer):
         """
         Add a geological layer to the subsurface.
@@ -126,6 +135,7 @@ class Subsurface:
         Return the number of layers.
         """
         return len(self.layers)
+
     def total_depth(self) -> float:
         """
         Return the maximum depth of the subsurface.
@@ -163,24 +173,27 @@ class Subsurface:
                 return layer
 
         raise ValueError(f"No layer found at depth {depth} m.")
-    
+
     def get_rock_at_depth(self, depth: float) -> Rock:
-             """
-             Return the rock present at the specified depth.
-     
-             Parameters
-             ----------
-             depth : float
-                 Depth below the surface (m).
-     
-             Returns
-             -------
-             Rock
-                 The rock occupying the specified depth.
-             """
-             return self.get_layer_at_depth(depth).rock  
-    
-   
+        """
+        Return the rock present at the specified depth.
+
+        Parameters
+        ----------
+        depth : float
+            Depth below the surface (m).
+
+        Returns
+        -------
+        Rock
+            The rock occupying the specified depth.
+        """
+        return self.get_layer_at_depth(depth).rock
+
+    # ==========================================================
+    # Temperature Calculations
+    # ==========================================================
+
     def temperature_at_depth(self, depth: float) -> float:
         """
         Calculate the temperature at a specified depth.
@@ -205,7 +218,7 @@ class Subsurface:
             self.surface_temperature
             + gradient_per_m * depth
         )
-        
+
     def temperature_profile(
         self,
         depths: list[float],
@@ -227,9 +240,8 @@ class Subsurface:
         return [
             self.temperature_at_depth(depth)
             for depth in depths
-        ] 
-        
-        
+        ]
+
     def heterogeneous_temperature_at_depth(
         self,
         depth: float,
@@ -265,19 +277,16 @@ class Subsurface:
             self.layers,
             key=lambda layer: layer.top_depth,
         ):
-
             gradient = (
                 layer.geothermal_gradient / 1000
             )
 
             if depth >= layer.bottom_depth:
-
                 temperature += (
                     layer.thickness * gradient
                 )
 
             else:
-
                 temperature += (
                     (depth - layer.top_depth)
                     * gradient
@@ -285,8 +294,8 @@ class Subsurface:
 
                 break
 
-        return temperature     
-        
+        return temperature
+
     def heterogeneous_temperature_profile(
         self,
         depths: list[float],
@@ -309,44 +318,34 @@ class Subsurface:
         return [
             self.heterogeneous_temperature_at_depth(depth)
             for depth in depths
-        ]    
-        
-    def total_radiogenic_heat_production(self) -> float:
+        ]
+
+    # ==========================================================
+    # Thermal Properties
+    # ==========================================================
+
+    def thermal_resistance(self) -> float:
         """
-        Calculate the total radiogenic heat production of
-        the subsurface.
+        Calculate the total thermal resistance of the
+        layered subsurface.
 
         Returns
         -------
         float
-            Total radiogenic heat production (W/m³).
+            Thermal resistance (m²·K/W).
         """
+
+        if not self.layers:
+            raise ValueError(
+                "Subsurface contains no layers."
+            )
 
         return sum(
-            layer.rock.radiogenic_heat_production
-            for layer in self.layers
-        )    
-        
-        
-    def integrated_radiogenic_heat_production(self) -> float:
-        """
-        Calculate the vertically integrated radiogenic heat
-        production of the subsurface.
-
-        Returns
-        -------
-        float
-            Integrated radiogenic heat production (W/m²).
-        """
-
-        return sum(
-            layer.rock.radiogenic_heat_production
-            * layer.thickness
+            layer.thickness
+            / layer.rock.thermal_conductivity
             for layer in self.layers
         )
-        
-        
-        
+
     def effective_thermal_conductivity(self) -> float:
         """
         Calculate the effective vertical thermal conductivity
@@ -369,33 +368,10 @@ class Subsurface:
         )
 
         return (
-    total_thickness
-    / self.thermal_resistance()
-)  
-    
-    
-    def thermal_resistance(self) -> float:
-        """
-        Calculate the total thermal resistance of the
-        layered subsurface.
-
-        Returns
-        -------
-        float
-            Thermal resistance (m²·K/W).
-        """
-
-        if not self.layers:
-            raise ValueError(
-                "Subsurface contains no layers."
-            )
-
-        return sum(
-            layer.thickness
-            / layer.rock.thermal_conductivity
-            for layer in self.layers
+            total_thickness
+            / self.thermal_resistance()
         )
-    
+
     def effective_volumetric_heat_capacity(self) -> float:
         """
         Calculate the effective volumetric heat capacity
@@ -422,44 +398,8 @@ class Subsurface:
             * layer.rock.density
             * layer.rock.heat_capacity
             for layer in self.layers
-        ) / total_thickness 
-     
-     
-    def layer_heat_content(
-        self,
-        layer_index: int,
-    ) -> float:
-        """
-        Calculate the stored heat content of a layer.
+        ) / total_thickness
 
-        Parameters
-        ----------
-        layer_index : int
-            Index of the geological layer.
-
-        Returns
-        -------
-        float
-            Heat content per unit area (J/m²).
-        """
-
-        layer = self.layers[layer_index]
-
-        temperature = self.temperature_at_depth(
-            layer.bottom_depth
-        )
-
-        delta_temperature = (
-            temperature
-            - self.surface_temperature
-        )
-
-        return (
-            layer.rock.density
-            * layer.rock.heat_capacity
-            * layer.thickness
-            * delta_temperature
-        ) 
     def effective_thermal_diffusivity(self) -> float:
         """
         Calculate the effective thermal diffusivity of the
@@ -490,13 +430,55 @@ class Subsurface:
             layer.thickness * layer.rock.heat_capacity
             for layer in self.layers
         ) / total_thickness
-        
+
         return (
             self.effective_thermal_conductivity()
             / self.effective_volumetric_heat_capacity()
         )
-        
-     
+
+    # ==========================================================
+    # Energy Calculations
+    # ==========================================================
+
+    def total_radiogenic_heat_production(self) -> float:
+        """
+        Calculate the total radiogenic heat production of
+        the subsurface.
+
+        Returns
+        -------
+        float
+            Total radiogenic heat production (W/m³).
+        """
+
+        return sum(
+            layer.rock.radiogenic_heat_production
+            for layer in self.layers
+        )
+
+    def integrated_radiogenic_heat_production(self) -> float:
+        """
+        Calculate the vertically integrated radiogenic heat
+        production of the subsurface.
+
+        Returns
+        -------
+        float
+            Integrated radiogenic heat production (W/m²).
+        """
+
+        return sum(
+            layer.rock.radiogenic_heat_production
+            * layer.thickness
+            for layer in self.layers
+        )
+
+    
+
+    # ==========================================================
+    # Heat Transfer
+    # ==========================================================
+
     def vertical_heat_flux(self) -> float:
         """
         Calculate the conductive vertical heat flux using
@@ -516,8 +498,11 @@ class Subsurface:
             -self.effective_thermal_conductivity()
             * gradient_per_m
         )
-        
-        
+
+    # ==========================================================
+    # Validation
+    # ==========================================================
+
     def validate(self):
         """
         Validate the subsurface geometry.
@@ -533,12 +518,16 @@ class Subsurface:
             if layers[i].bottom_depth > layers[i + 1].top_depth:
                 raise ValueError(
                     "Layers overlap in the subsurface."
-                    
+
                 )
             if layers[i].bottom_depth < layers[i + 1].top_depth:
                 raise ValueError(
                     "Gap detected between geological layers."
-                )    
+                )
+
+    # ==========================================================
+    # Summary
+    # ==========================================================
 
     def summary(self) -> dict:
         """

@@ -615,25 +615,4 @@ class TestSubsurface:
 
         with pytest.raises(ValueError):
             model.effective_volumetric_heat_capacity()        
-    
-    def test_layer_heat_content(self, sandstone):
-        model = Subsurface()
-
-        model.add_layer(
-            Layer(
-                0,
-                1000,
-                sandstone,
-            )
-        )
-
-        heat = model.layer_heat_content(0)
-
-        assert heat > 0
-
-
-    def test_layer_heat_content_invalid_index(self):
-        model = Subsurface()
-
-        with pytest.raises(IndexError):
-            model.layer_heat_content(0)        
+  

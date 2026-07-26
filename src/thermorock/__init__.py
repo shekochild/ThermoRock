@@ -6,6 +6,7 @@ A Python package for thermal rock properties and geothermal calculations.
 
 from .database import get_rock_properties
 from .diffusivity import thermal_diffusivity
+from .analysis import GeothermalAnalysis
 from .geothermal import (
     geothermal_gradient,
     temperature_at_depth,
@@ -30,4 +31,6 @@ __all__ = [
     "Rock",
     "Layer",
     "Subsurface",
+    "GeothermalAnalysis",
+    ...
 ]
