@@ -522,3 +522,48 @@ class TestSubsurface:
 
         with pytest.raises(ValueError):
             model.vertical_heat_flux()          
+    
+    
+    def test_thermal_resistance(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.0,
+            2300,
+            900,
+            2e-6,
+        )
+
+        shale = Rock(
+            "Shale",
+            1.0,
+            2500,
+            850,
+            1e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        model.add_layer(
+            Layer(1000, 2000, shale)
+        )
+
+        expected = (
+            1000 / 2.0
+            + 1000 / 1.0
+        )
+
+        assert (
+            model.thermal_resistance()
+            == pytest.approx(expected)
+        )
+
+
+    def test_thermal_resistance_empty(self):
+        model = Subsurface()
+
+        with pytest.raises(ValueError):
+            model.thermal_resistance()        

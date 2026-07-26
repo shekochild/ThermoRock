@@ -368,13 +368,34 @@ class Subsurface:
             for layer in self.layers
         )
 
-        total_resistance = sum(
+        return (
+    total_thickness
+    / self.thermal_resistance()
+)  
+    
+    
+    def thermal_resistance(self) -> float:
+        """
+        Calculate the total thermal resistance of the
+        layered subsurface.
+
+        Returns
+        -------
+        float
+            Thermal resistance (m²·K/W).
+        """
+
+        if not self.layers:
+            raise ValueError(
+                "Subsurface contains no layers."
+            )
+
+        return sum(
             layer.thickness
             / layer.rock.thermal_conductivity
             for layer in self.layers
         )
-
-        return total_thickness / total_resistance    
+    
      
     def effective_thermal_diffusivity(self) -> float:
         """
