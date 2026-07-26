@@ -139,3 +139,51 @@ class TestGeothermalAnalysis:
 
         with pytest.raises(ValueError):
             analysis.heat_in_place(0)
+    
+    def test_recoverable_heat(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2300,
+            900,
+            2e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        analysis = GeothermalAnalysis(model)
+
+        heat = analysis.recoverable_heat(
+            reservoir_area=1000,
+            recovery_factor=0.2,
+        )
+
+        assert heat > 0
+
+
+    def test_invalid_recovery_factor(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2300,
+            900,
+            2e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        analysis = GeothermalAnalysis(model)
+
+        with pytest.raises(ValueError):
+            analysis.recoverable_heat(
+                reservoir_area=1000,
+                recovery_factor=1.5,
+            )        

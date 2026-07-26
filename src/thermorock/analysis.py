@@ -107,3 +107,37 @@ class GeothermalAnalysis:
             self.total_heat_content()
             * reservoir_area
         )      
+    
+    def recoverable_heat(
+        self,
+        reservoir_area: float,
+        recovery_factor: float,
+    ) -> float:
+        """
+        Calculate the recoverable geothermal heat.
+
+        Parameters
+        ----------
+        reservoir_area : float
+            Reservoir area (m²).
+
+        recovery_factor : float
+            Fraction of heat that can be recovered.
+
+        Returns
+        -------
+        float
+            Recoverable heat (J).
+        """
+
+        if not 0 < recovery_factor <= 1:
+            raise ValueError(
+                "recovery_factor must be between 0 and 1."
+            )
+
+        return (
+            self.heat_in_place(
+                reservoir_area
+            )
+            * recovery_factor
+        )    
