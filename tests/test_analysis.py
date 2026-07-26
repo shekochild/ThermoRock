@@ -187,3 +187,53 @@ class TestGeothermalAnalysis:
                 reservoir_area=1000,
                 recovery_factor=1.5,
             )        
+            
+    def test_recoverable_energy(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2300,
+            900,
+            2e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        analysis = GeothermalAnalysis(model)
+
+        energy = analysis.recoverable_energy(
+            reservoir_area=1000,
+            recovery_factor=0.2,
+            conversion_efficiency=0.8,
+        )
+
+        assert energy > 0
+
+
+    def test_invalid_conversion_efficiency(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2300,
+            900,
+            2e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        analysis = GeothermalAnalysis(model)
+
+        with pytest.raises(ValueError):
+            analysis.recoverable_energy(
+                reservoir_area=1000,
+                recovery_factor=0.2,
+                conversion_efficiency=1.2,
+            )       

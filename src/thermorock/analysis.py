@@ -141,3 +141,42 @@ class GeothermalAnalysis:
             )
             * recovery_factor
         )    
+        
+    def recoverable_energy(
+        self,
+        reservoir_area: float,
+        recovery_factor: float,
+        conversion_efficiency: float,
+    ) -> float:
+        """
+        Calculate the recoverable geothermal energy.
+
+        Parameters
+        ----------
+        reservoir_area : float
+            Reservoir area (m²).
+
+        recovery_factor : float
+            Fraction of recoverable heat.
+
+        conversion_efficiency : float
+            Fraction of heat converted into usable energy.
+
+        Returns
+        -------
+        float
+            Recoverable energy (J).
+        """
+
+        if not 0 < conversion_efficiency <= 1:
+            raise ValueError(
+                "conversion_efficiency must be between 0 and 1."
+            )
+
+        return (
+            self.recoverable_heat(
+                reservoir_area,
+                recovery_factor,
+            )
+            * conversion_efficiency
+        )    
