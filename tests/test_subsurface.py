@@ -493,4 +493,32 @@ class TestSubsurface:
             Layer(1000, 2000, sandstone)
         )
 
-        model.validate()              
+        model.validate()    
+             
+    def test_vertical_heat_flux(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2300,
+            900,
+            2e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        expected = -(2.5 * (30 / 1000))
+
+        assert model.vertical_heat_flux() == pytest.approx(
+            expected
+        )
+
+
+    def test_vertical_heat_flux_empty(self):
+        model = Subsurface()
+
+        with pytest.raises(ValueError):
+            model.vertical_heat_flux()          

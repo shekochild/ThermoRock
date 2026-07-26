@@ -415,6 +415,28 @@ class Subsurface:
             )
         )  
         
+     
+    def vertical_heat_flux(self) -> float:
+        """
+        Calculate the conductive vertical heat flux using
+        Fourier's Law.
+
+        Returns
+        -------
+        float
+            Vertical heat flux (W/m²).
+        """
+
+        gradient_per_m = (
+            self.geothermal_gradient / 1000
+        )
+
+        return (
+            -self.effective_thermal_conductivity()
+            * gradient_per_m
+        )
+        
+        
     def validate(self):
         """
         Validate the subsurface geometry.
