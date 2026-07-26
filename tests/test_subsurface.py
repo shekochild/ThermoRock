@@ -567,3 +567,51 @@ class TestSubsurface:
 
         with pytest.raises(ValueError):
             model.thermal_resistance()        
+    
+    
+    def test_effective_volumetric_heat_capacity(self):
+        sandstone = Rock(
+            "Sandstone",
+            2.5,
+            2300,
+            900,
+            2e-6,
+        )
+
+        granite = Rock(
+            "Granite",
+            3.5,
+            2700,
+            800,
+            4e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 1000, sandstone)
+        )
+
+        model.add_layer(
+            Layer(1000, 3000, granite)
+        )
+
+        expected = (
+            (
+                1000 * 2300 * 900
+                + 2000 * 2700 * 800
+            )
+            / 3000
+        )
+
+        assert (
+            model.effective_volumetric_heat_capacity()
+            == pytest.approx(expected)
+        )
+
+
+    def test_effective_volumetric_heat_capacity_empty(self):
+        model = Subsurface()
+
+        with pytest.raises(ValueError):
+            model.effective_volumetric_heat_capacity()        

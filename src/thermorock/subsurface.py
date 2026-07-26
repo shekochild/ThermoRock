@@ -396,6 +396,34 @@ class Subsurface:
             for layer in self.layers
         )
     
+    def effective_volumetric_heat_capacity(self) -> float:
+        """
+        Calculate the effective volumetric heat capacity
+        of the layered subsurface.
+
+        Returns
+        -------
+        float
+            Effective volumetric heat capacity (J/m³/K).
+        """
+
+        if not self.layers:
+            raise ValueError(
+                "Subsurface contains no layers."
+            )
+
+        total_thickness = sum(
+            layer.thickness
+            for layer in self.layers
+        )
+
+        return sum(
+            layer.thickness
+            * layer.rock.density
+            * layer.rock.heat_capacity
+            for layer in self.layers
+        ) / total_thickness 
+     
      
     def effective_thermal_diffusivity(self) -> float:
         """
@@ -427,14 +455,11 @@ class Subsurface:
             layer.thickness * layer.rock.heat_capacity
             for layer in self.layers
         ) / total_thickness
-
+        
         return (
             self.effective_thermal_conductivity()
-            / (
-                average_density
-                * average_heat_capacity
-            )
-        )  
+            / self.effective_volumetric_heat_capacity()
+        )
         
      
     def vertical_heat_flux(self) -> float:
