@@ -425,6 +425,41 @@ class Subsurface:
         ) / total_thickness 
      
      
+    def layer_heat_content(
+        self,
+        layer_index: int,
+    ) -> float:
+        """
+        Calculate the stored heat content of a layer.
+
+        Parameters
+        ----------
+        layer_index : int
+            Index of the geological layer.
+
+        Returns
+        -------
+        float
+            Heat content per unit area (J/m²).
+        """
+
+        layer = self.layers[layer_index]
+
+        temperature = self.temperature_at_depth(
+            layer.bottom_depth
+        )
+
+        delta_temperature = (
+            temperature
+            - self.surface_temperature
+        )
+
+        return (
+            layer.rock.density
+            * layer.rock.heat_capacity
+            * layer.thickness
+            * delta_temperature
+        ) 
     def effective_thermal_diffusivity(self) -> float:
         """
         Calculate the effective thermal diffusivity of the
