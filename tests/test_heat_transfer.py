@@ -346,6 +346,18 @@ class TestHeatTransferSolver:
                 depth=-10,
                 spacing=100,
             )
+
+    def test_export_temperature_profile(self, model, tmp_path):
+        solver = HeatTransferSolver(model)
+
+        output = tmp_path / "temperature.csv"
+
+        solver.export_temperature_profile(
+            filename=str(output),
+            spacing=100,
+        )
+
+        assert output.exists()
             
     def test_solver_returns_convergence_info(self, model):
         solver = HeatTransferSolver(model)

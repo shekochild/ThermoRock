@@ -2,6 +2,9 @@
 Numerical heat transfer solvers.
 """
 
+import csv
+from pathlib import Path
+
 from thermorock.subsurface import Subsurface
 
 class HeatTransferSolver:
@@ -400,6 +403,44 @@ class HeatTransferSolver:
         heat_flux.append(heat_flux[-1])
 
         return grid, heat_flux
+
+    def export_temperature_profile(
+        self,
+        filename: str,
+        spacing: float,
+    ) -> None:
+        """
+        Export the finite-difference temperature profile to CSV.
+
+        Parameters
+        ----------
+        filename : str
+            Output CSV file path.
+
+        spacing : float
+            Grid spacing (m).
+
+        Returns
+        -------
+        None
+            The temperature profile is written to disk.
+        """
+
+        result = self.finite_difference_steady_state_with_info(
+            spacing=spacing
+        )
+
+        path = Path(filename)
+
+        with path.open("w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["depth", "temperature"])
+            writer.writerows(
+                zip(
+                    result["depth"],
+                    result["temperature"],
+                )
+            )
     
     
     
