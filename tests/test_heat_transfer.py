@@ -152,3 +152,32 @@ class TestHeatTransferSolver:
             depth += spacing
 
         return grid        
+
+   
+    def test_finite_difference_steady_state(self, model):
+        solver = HeatTransferSolver(model)
+
+        grid, temperatures = (
+            solver.finite_difference_steady_state(
+                spacing=250
+            )
+        )
+
+        assert len(grid) == len(temperatures)
+
+        assert temperatures[0] == 10.0
+
+        assert temperatures[-1] > temperatures[0]
+
+
+    def test_finite_difference_solution_is_monotonic(self, model):
+        solver = HeatTransferSolver(model)
+
+        _, temperatures = (
+            solver.finite_difference_steady_state()
+        )
+
+        assert all(
+            temperatures[i] <= temperatures[i + 1]
+            for i in range(len(temperatures) - 1)
+        )

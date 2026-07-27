@@ -133,3 +133,73 @@ class HeatTransferSolver:
             depth += spacing
 
         return grid     
+
+  
+   
+    def finite_difference_steady_state(
+        self,
+        spacing: float = 100.0,
+        max_iterations: int = 1000,
+        tolerance: float = 1e-6,
+    ) -> tuple[list[float], list[float]]:
+        """
+        Solve the one-dimensional steady-state heat equation
+        using the finite-difference method.
+
+        Parameters
+        ----------
+        spacing : float, optional
+            Grid spacing (m).
+
+        max_iterations : int, optional
+            Maximum number of solver iterations.
+
+        tolerance : float, optional
+            Convergence tolerance.
+
+        Returns
+        -------
+        tuple[list[float], list[float]]
+            Grid depths and temperatures.
+        """
+
+        if spacing <= 0:
+            raise ValueError("spacing must be positive.")
+
+        grid = self.create_grid(spacing)
+
+        gradient = self.subsurface.geothermal_gradient / 1000
+
+        temperatures = [
+            self.surface_temperature + gradient * depth
+            for depth in grid
+        ]
+
+        # Surface boundary condition
+        temperatures[0] = self.surface_temperature
+
+        # Bottom boundary condition
+        temperatures[-1] = (
+            self.surface_temperature
+            + gradient * grid[-1]
+        )
+
+        for _ in range(max_iterations):
+
+            previous = temperatures.copy()
+
+            for i in range(1, len(grid) - 1):
+                temperatures[i] = (
+                    previous[i - 1]
+                    + previous[i + 1]
+                ) / 2
+
+            error = max(
+                abs(a - b)
+                for a, b in zip(previous, temperatures)
+            )
+
+            if error < tolerance:
+                break
+
+        return grid, temperatures
