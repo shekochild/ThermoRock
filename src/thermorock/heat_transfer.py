@@ -292,3 +292,46 @@ class HeatTransferSolver:
             )
 
         return profile
+    
+  
+    def heat_flux_profile(
+        self,
+        spacing: float,
+    ) -> tuple[list[float], list[float]]:
+        """
+        Calculate heat flux at each grid node using
+        Fourier's Law.
+
+        Parameters
+        ----------
+        spacing : float
+            Grid spacing (m).
+
+        Returns
+        -------
+        tuple[list[float], list[float]]
+            Grid depths and heat fluxes (W/m²).
+        """
+
+        grid, temperatures = self.finite_difference_steady_state(
+            spacing=spacing
+        )
+
+        conductivity = self.conductivity_profile(spacing)
+
+        heat_flux = [0.0]
+
+        for i in range(1, len(grid) - 1):
+
+            gradient = (
+                temperatures[i + 1]
+                - temperatures[i - 1]
+            ) / (2 * spacing)
+
+            flux = -conductivity[i] * gradient
+
+            heat_flux.append(flux)
+
+        heat_flux.append(heat_flux[-1])
+
+        return grid, heat_flux

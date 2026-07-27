@@ -303,3 +303,25 @@ class TestHeatTransferSolver:
         assert temperatures[0] == 10.0
 
         assert temperatures[-1] > temperatures[0]
+        
+    def test_heat_flux_profile(self, model):
+        solver = HeatTransferSolver(model)
+
+        grid, flux = solver.heat_flux_profile(
+            spacing=100
+        )
+
+        assert len(grid) == len(flux)
+
+
+    def test_heat_flux_is_finite(self, model):
+        solver = HeatTransferSolver(model)
+
+        _, flux = solver.heat_flux_profile(
+            spacing=100
+        )
+
+        assert all(
+            abs(value) < float("inf")
+            for value in flux
+        )
