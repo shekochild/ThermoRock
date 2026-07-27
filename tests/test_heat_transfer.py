@@ -346,3 +346,27 @@ class TestHeatTransferSolver:
                 depth=-10,
                 spacing=100,
             )
+            
+    def test_solver_returns_convergence_info(self, model):
+        solver = HeatTransferSolver(model)
+
+        result = solver.finite_difference_steady_state_with_info(
+            spacing=100
+        )
+
+        assert "depth" in result
+        assert "temperature" in result
+        assert "iterations" in result
+        assert "converged" in result
+        assert "final_error" in result
+
+
+    def test_solver_converges(self, model):
+        solver = HeatTransferSolver(model)
+
+        result = solver.finite_difference_steady_state_with_info(
+            spacing=100
+        )
+
+        assert result["converged"] is True       
+                

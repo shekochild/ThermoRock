@@ -163,6 +163,58 @@ class HeatTransferSolver:
             Grid depths and temperatures.
         """
 
+        result = self._finite_difference_steady_state_result(
+            spacing,
+            max_iterations,
+            tolerance,
+        )
+
+        return result["depth"], result["temperature"]
+
+    def finite_difference_steady_state_with_info(
+        self,
+        spacing: float = 100.0,
+        max_iterations: int = 1000,
+        tolerance: float = 1e-6,
+    ) -> dict[str, object]:
+        """
+        Solve the one-dimensional steady-state heat equation
+        and return convergence diagnostics.
+
+        Parameters
+        ----------
+        spacing : float, optional
+            Grid spacing (m).
+
+        max_iterations : int, optional
+            Maximum number of solver iterations.
+
+        tolerance : float, optional
+            Convergence tolerance.
+
+        Returns
+        -------
+        dict[str, object]
+            Depths, temperatures, iteration count,
+            convergence status, and final error.
+        """
+
+        return self._finite_difference_steady_state_result(
+            spacing,
+            max_iterations,
+            tolerance,
+        )
+
+    def _finite_difference_steady_state_result(
+        self,
+        spacing: float,
+        max_iterations: int,
+        tolerance: float,
+    ) -> dict[str, object]:
+        """
+        Shared finite-difference implementation with diagnostics.
+        """
+
         if spacing <= 0:
             raise ValueError("spacing must be positive.")
 
@@ -185,6 +237,10 @@ class HeatTransferSolver:
             self.surface_temperature
             + gradient * grid[-1]
         )
+
+        iteration_count = 0
+        converged = False
+        final_error = 0.0
 
         for _ in range(max_iterations):
 
@@ -210,15 +266,24 @@ class HeatTransferSolver:
                     + right_conductivity
                 )
 
-            error = max(
+            final_error = max(
                 abs(a - b)
                 for a, b in zip(previous, temperatures)
             )
 
-            if error < tolerance:
+            iteration_count += 1
+
+            if final_error < tolerance:
+                converged = True
                 break
 
-        return grid, temperatures
+        return {
+            "depth": grid,
+            "temperature": temperatures,
+            "iterations": iteration_count,
+            "converged": converged,
+            "final_error": final_error,
+        }
     
     def conductivity_profile(
         self,
