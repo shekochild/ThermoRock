@@ -167,6 +167,7 @@ class HeatTransferSolver:
             raise ValueError("spacing must be positive.")
 
         grid = self.create_grid(spacing)
+        conductivity = self.conductivity_profile(spacing)
 
         gradient = self.subsurface.geothermal_gradient / 1000
 
@@ -189,10 +190,21 @@ class HeatTransferSolver:
             previous = temperatures.copy()
 
             for i in range(1, len(grid) - 1):
-                temperatures[i] = (
-                    previous[i - 1]
-                    + previous[i + 1]
+                left_conductivity = (
+                    conductivity[i - 1] + conductivity[i]
                 ) / 2
+
+                right_conductivity = (
+                    conductivity[i] + conductivity[i + 1]
+                ) / 2
+
+                temperatures[i] = (
+                    left_conductivity * previous[i - 1]
+                    + right_conductivity * previous[i + 1]
+                ) / (
+                    left_conductivity
+                    + right_conductivity
+                )
 
             error = max(
                 abs(a - b)

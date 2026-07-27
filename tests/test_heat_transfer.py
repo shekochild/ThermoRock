@@ -234,3 +234,45 @@ class TestHeatTransferSolver:
             1.5,
             1.5,
         ]     
+        
+    def test_variable_conductivity_solver(self):
+        sandstone = Rock(
+            "Sandstone",
+            thermal_conductivity=2.5,
+            density=2500,
+            heat_capacity=1000,
+            radiogenic_heat_production=1e-6,
+        )
+
+        shale = Rock(
+            "Shale",
+            thermal_conductivity=1.5,
+            density=2600,
+            heat_capacity=900,
+            radiogenic_heat_production=1e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 500, sandstone)
+        )
+
+        model.add_layer(
+            Layer(500, 1000, shale)
+        )
+
+        solver = HeatTransferSolver(model)
+
+        grid, temperatures = (
+            solver.finite_difference_steady_state(
+                spacing=250
+            )
+        )
+
+        assert len(grid) == len(temperatures)
+
+        assert temperatures[0] == 10.0
+
+        assert temperatures[-1] > temperatures[0]
+            
