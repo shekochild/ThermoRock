@@ -2,6 +2,8 @@
 Visualization utilities for ThermoRock.
 """
 
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 
 from thermorock.heat_transfer import HeatTransferSolver
@@ -173,6 +175,114 @@ class Visualization:
         fig.tight_layout()
 
         return fig, (ax1, ax2)
+
+    def plot_complete_geothermal_profile(
+        self,
+        spacing: float = 100,
+    ):
+        """
+        Plot stratigraphy, temperature, and heat-flux profiles.
+
+        Parameters
+        ----------
+        spacing : float, optional
+            Grid spacing (m).
+
+        Returns
+        -------
+        tuple
+            Matplotlib figure and stratigraphy, temperature,
+            and heat-flux axes.
+        """
+
+        depth, temperature = (
+            self.solver.finite_difference_steady_state(
+                spacing=spacing
+            )
+        )
+
+        _, heat_flux = self.solver.heat_flux_profile(
+            spacing=spacing
+        )
+
+        fig, (ax1, ax2, ax3) = plt.subplots(
+            1,
+            3,
+            figsize=(14, 8),
+            sharey=True,
+        )
+
+        self._plot_stratigraphy_axis(
+            ax1,
+            invert_axis=False,
+        )
+
+        ax2.plot(
+            temperature,
+            depth,
+            linewidth=2,
+            label="Temperature",
+        )
+
+        ax2.set_xlabel("Temperature (°C)")
+        ax2.set_title("Temperature Profile")
+        ax2.grid(True)
+
+        ax3.plot(
+            heat_flux,
+            depth,
+            linewidth=2,
+            label="Heat flux",
+        )
+
+        ax3.set_xlabel("Heat Flux (W/m²)")
+        ax3.set_title("Heat Flux Profile")
+        ax3.grid(True)
+        ax3.invert_yaxis()
+
+        fig.tight_layout()
+
+        return fig, (ax1, ax2, ax3)
+
+    def save_figure(
+        self,
+        figure,
+        filename,
+        dpi: int = 300,
+    ) -> Path:
+        """
+        Save a Matplotlib figure to disk.
+
+        Parameters
+        ----------
+        figure
+            Matplotlib figure to save.
+
+        filename
+            Output file path.
+
+        dpi : int, optional
+            Output resolution in dots per inch.
+
+        Returns
+        -------
+        Path
+            Path to the saved figure.
+        """
+
+        path = Path(filename)
+        path.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        figure.savefig(
+            path,
+            dpi=dpi,
+            bbox_inches="tight",
+        )
+
+        return path
 
     def _plot_stratigraphy_axis(
         self,
