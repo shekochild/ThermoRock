@@ -335,3 +335,50 @@ class HeatTransferSolver:
         heat_flux.append(heat_flux[-1])
 
         return grid, heat_flux
+    
+    
+    
+    def temperature_at_depth(
+        self,
+        depth: float,
+        spacing: float,
+    ) -> float:
+        """
+        Interpolate the temperature at an arbitrary depth.
+
+        Parameters
+        ----------
+        depth : float
+            Depth (m).
+        spacing : float
+            Grid spacing (m).
+
+        Returns
+        -------
+        float
+            Interpolated temperature (°C).
+        """
+
+        grid, temperatures = self.finite_difference_steady_state(
+            spacing=spacing
+        )
+
+        if depth < grid[0] or depth > grid[-1]:
+            raise ValueError(
+                "Depth is outside the computational domain."
+            )
+
+        for i in range(len(grid) - 1):
+            if grid[i] <= depth <= grid[i + 1]:
+                fraction = (
+                    (depth - grid[i]) /
+                    (grid[i + 1] - grid[i])
+                )
+
+                return (
+                    temperatures[i]
+                    + fraction *
+                    (temperatures[i + 1] - temperatures[i])
+                )
+
+        return temperatures[-1]

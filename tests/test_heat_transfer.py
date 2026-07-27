@@ -325,3 +325,24 @@ class TestHeatTransferSolver:
             abs(value) < float("inf")
             for value in flux
         )
+        
+        
+    def test_temperature_at_depth(self, model):
+        solver = HeatTransferSolver(model)
+
+        temperature = solver.temperature_at_depth(
+            depth=150,
+            spacing=100,
+        )
+
+        assert isinstance(temperature, float)
+
+
+    def test_temperature_outside_domain(self, model):
+        solver = HeatTransferSolver(model)
+
+        with pytest.raises(ValueError):
+            solver.temperature_at_depth(
+                depth=-10,
+                spacing=100,
+            )
