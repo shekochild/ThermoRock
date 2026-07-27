@@ -116,4 +116,39 @@ class TestHeatTransferSolver:
         with pytest.raises(ValueError):
             solver.steady_state_distribution(
                 depth_interval=0
-            )    
+            ) 
+            
+    def create_grid(
+        self,
+        spacing: float,
+    ) -> list[float]:
+        """
+        Create a one-dimensional computational grid.
+
+        Parameters
+        ----------
+        spacing : float
+            Distance between grid nodes (m).
+
+        Returns
+        -------
+        list[float]
+            Grid node depths (m).
+        """
+
+        if spacing <= 0:
+            raise ValueError(
+                "spacing must be positive."
+            )
+
+        maximum_depth = self.subsurface.total_depth()
+
+        grid = []
+
+        depth = 0.0
+
+        while depth <= maximum_depth:
+            grid.append(depth)
+            depth += spacing
+
+        return grid        
