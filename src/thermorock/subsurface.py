@@ -416,21 +416,6 @@ class Subsurface:
                 "Subsurface contains no layers."
             )
 
-        total_thickness = sum(
-            layer.thickness
-            for layer in self.layers
-        )
-
-        average_density = sum(
-            layer.thickness * layer.rock.density
-            for layer in self.layers
-        ) / total_thickness
-
-        average_heat_capacity = sum(
-            layer.thickness * layer.rock.heat_capacity
-            for layer in self.layers
-        ) / total_thickness
-
         return (
             self.effective_thermal_conductivity()
             / self.effective_volumetric_heat_capacity()

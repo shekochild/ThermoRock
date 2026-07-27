@@ -62,10 +62,7 @@ class HeatTransferSolver:
             Temperatures (°C).
         """
 
-        return [
-            self.subsurface.temperature_at_depth(depth)
-            for depth in depths
-        ]
+        return self.subsurface.temperature_profile(depths)
         
         
     def steady_state_distribution(
@@ -91,15 +88,7 @@ class HeatTransferSolver:
                 "depth_interval must be positive."
             )
 
-        maximum_depth = self.subsurface.total_depth()
-
-        depths = []
-
-        depth = 0.0
-
-        while depth <= maximum_depth:
-            depths.append(depth)
-            depth += depth_interval
+        depths = self.create_grid(depth_interval)
 
         temperatures = (
             self.steady_state_temperature_profile(
