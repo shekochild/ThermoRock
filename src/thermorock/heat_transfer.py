@@ -168,6 +168,7 @@ class HeatTransferSolver:
 
         grid = self.create_grid(spacing)
         conductivity = self.conductivity_profile(spacing)
+        heat_source = self.radiogenic_heat_profile(spacing)
 
         gradient = self.subsurface.geothermal_gradient / 1000
 
@@ -201,6 +202,9 @@ class HeatTransferSolver:
                 temperatures[i] = (
                     left_conductivity * previous[i - 1]
                     + right_conductivity * previous[i + 1]
+                    # Internal heat generation raises the
+                    # steady-state interior temperature.
+                    + heat_source[i] * spacing**2
                 ) / (
                     left_conductivity
                     + right_conductivity
@@ -252,3 +256,39 @@ class HeatTransferSolver:
             )
 
         return conductivity
+
+
+    def radiogenic_heat_profile(
+        self,
+        spacing: float,
+    ) -> list[float]:
+        """
+        Return radiogenic heat production at each grid node.
+
+        Parameters
+        ----------
+        spacing : float
+            Grid spacing (m).
+
+        Returns
+        -------
+        list[float]
+            Radiogenic heat production (W/m³).
+        """
+
+        grid = self.create_grid(spacing)
+
+        profile = []
+
+        for depth in grid:
+
+            if depth == self.subsurface.total_depth():
+                layer = self.subsurface.layers[-1]
+            else:
+                layer = self.subsurface.get_layer_at_depth(depth)
+
+            profile.append(
+                layer.rock.radiogenic_heat_production
+            )
+
+        return profile

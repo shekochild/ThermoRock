@@ -276,3 +276,30 @@ class TestHeatTransferSolver:
 
         assert temperatures[-1] > temperatures[0]
             
+            
+    def test_radiogenic_heat_profile(self, model):
+        solver = HeatTransferSolver(model)
+
+        profile = solver.radiogenic_heat_profile(
+            spacing=100
+        )
+
+        assert len(profile) == len(
+            solver.create_grid(100)
+        )
+
+
+    def test_solver_with_radiogenic_heat(self, model):
+        solver = HeatTransferSolver(model)
+
+        grid, temperatures = (
+            solver.finite_difference_steady_state(
+                spacing=250
+            )
+        )
+
+        assert len(grid) == len(temperatures)
+
+        assert temperatures[0] == 10.0
+
+        assert temperatures[-1] > temperatures[0]
