@@ -181,6 +181,77 @@ class TestHeatTransferSolver:
             temperatures[i] <= temperatures[i + 1]
             for i in range(len(temperatures) - 1)
         )
+
+    def test_finite_difference_negative_spacing(self, model):
+        solver = HeatTransferSolver(model)
+
+        with pytest.raises(
+            ValueError,
+            match="Grid spacing must be positive.",
+        ):
+            solver.finite_difference_steady_state(
+                spacing=-100
+            )
+
+
+    def test_finite_difference_zero_spacing(self, model):
+        solver = HeatTransferSolver(model)
+
+        with pytest.raises(
+            ValueError,
+            match="Grid spacing must be positive.",
+        ):
+            solver.finite_difference_steady_state(
+                spacing=0
+            )
+
+
+    def test_finite_difference_zero_max_iterations(self, model):
+        solver = HeatTransferSolver(model)
+
+        with pytest.raises(
+            ValueError,
+            match="Maximum iterations must be positive.",
+        ):
+            solver.finite_difference_steady_state(
+                max_iterations=0
+            )
+
+
+    def test_finite_difference_negative_max_iterations(self, model):
+        solver = HeatTransferSolver(model)
+
+        with pytest.raises(
+            ValueError,
+            match="Maximum iterations must be positive.",
+        ):
+            solver.finite_difference_steady_state(
+                max_iterations=-1
+            )
+
+
+    def test_finite_difference_zero_tolerance(self, model):
+        solver = HeatTransferSolver(model)
+
+        with pytest.raises(
+            ValueError,
+            match="Tolerance must be positive.",
+        ):
+            solver.finite_difference_steady_state(
+                tolerance=0
+            )
+
+
+    def test_finite_difference_negative_tolerance(self, model):
+        solver = HeatTransferSolver(model)
+
+        with pytest.raises(
+            ValueError,
+            match="Tolerance must be positive.",
+        ):
+            solver.finite_difference_steady_state(
+                tolerance=-1e-6
+            )
         
     def test_conductivity_profile_length(self, model):
         solver = HeatTransferSolver(model)

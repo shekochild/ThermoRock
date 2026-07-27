@@ -218,8 +218,11 @@ class HeatTransferSolver:
         Shared finite-difference implementation with diagnostics.
         """
 
-        if spacing <= 0:
-            raise ValueError("spacing must be positive.")
+        self._validate_solver_parameters(
+            spacing,
+            max_iterations,
+            tolerance,
+        )
 
         grid = self.create_grid(spacing)
         conductivity = self.conductivity_profile(spacing)
@@ -287,6 +290,25 @@ class HeatTransferSolver:
             "converged": converged,
             "final_error": final_error,
         }
+
+    def _validate_solver_parameters(
+        self,
+        spacing: float,
+        max_iterations: int,
+        tolerance: float,
+    ) -> None:
+        """
+        Validate finite-difference solver parameters.
+        """
+
+        if spacing <= 0:
+            raise ValueError("Grid spacing must be positive.")
+
+        if max_iterations <= 0:
+            raise ValueError("Maximum iterations must be positive.")
+
+        if tolerance <= 0:
+            raise ValueError("Tolerance must be positive.")
     
     def conductivity_profile(
         self,
