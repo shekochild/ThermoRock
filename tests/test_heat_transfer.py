@@ -181,3 +181,56 @@ class TestHeatTransferSolver:
             temperatures[i] <= temperatures[i + 1]
             for i in range(len(temperatures) - 1)
         )
+        
+    def test_conductivity_profile_length(self, model):
+        solver = HeatTransferSolver(model)
+
+        profile = solver.conductivity_profile(
+            spacing=100
+        )
+
+        assert len(profile) == len(
+            solver.create_grid(100)
+        )
+
+
+    def test_conductivity_profile_values(self):
+        sandstone = Rock(
+            "Sandstone",
+            thermal_conductivity=2.5,
+            density=2500,
+            heat_capacity=1000,
+            radiogenic_heat_production=1e-6,
+        )
+
+        shale = Rock(
+            "Shale",
+            thermal_conductivity=1.5,
+            density=2600,
+            heat_capacity=900,
+            radiogenic_heat_production=1e-6,
+        )
+
+        model = Subsurface()
+
+        model.add_layer(
+            Layer(0, 500, sandstone)
+        )
+
+        model.add_layer(
+            Layer(500, 1000, shale)
+        )
+
+        solver = HeatTransferSolver(model)
+
+        profile = solver.conductivity_profile(
+            spacing=250
+        )
+
+        assert profile == [
+            2.5,
+            2.5,
+            1.5,
+            1.5,
+            1.5,
+        ]     

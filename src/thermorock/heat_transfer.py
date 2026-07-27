@@ -203,3 +203,40 @@ class HeatTransferSolver:
                 break
 
         return grid, temperatures
+    
+    def conductivity_profile(
+        self,
+        spacing: float,
+    ) -> list[float]:
+        """
+        Return the thermal conductivity at every grid node.
+
+        Parameters
+        ----------
+        spacing : float
+            Grid spacing (m).
+
+        Returns
+        -------
+        list[float]
+            Thermal conductivity (W/m/K) at each node.
+        """
+
+        grid = self.create_grid(spacing)
+
+        conductivity = []
+
+        for depth in grid:
+
+            # Handle the bottom node, which coincides with the
+            # bottom depth of the final layer.
+            if depth == self.subsurface.total_depth():
+                layer = self.subsurface.layers[-1]
+            else:
+                layer = self.subsurface.get_layer_at_depth(depth)
+
+            conductivity.append(
+                layer.rock.thermal_conductivity
+            )
+
+        return conductivity
