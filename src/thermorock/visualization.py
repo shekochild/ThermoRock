@@ -118,6 +118,71 @@ class Visualization:
 
         fig, ax = plt.subplots(figsize=(4, 8))
 
+        self._plot_stratigraphy_axis(ax)
+
+        return fig, ax
+
+    def plot_geothermal_profile(
+        self,
+        spacing: float = 100,
+    ):
+        """
+        Plot geological stratigraphy beside the temperature profile.
+
+        Parameters
+        ----------
+        spacing : float, optional
+            Grid spacing (m).
+
+        Returns
+        -------
+        tuple
+            Matplotlib figure and stratigraphy/temperature axes.
+        """
+
+        depth, temperature = (
+            self.solver.finite_difference_steady_state(
+                spacing=spacing
+            )
+        )
+
+        fig, (ax1, ax2) = plt.subplots(
+            1,
+            2,
+            figsize=(10, 8),
+            sharey=True,
+        )
+
+        self._plot_stratigraphy_axis(
+            ax1,
+            invert_axis=False,
+        )
+
+        ax2.plot(
+            temperature,
+            depth,
+            linewidth=2,
+            label="Temperature",
+        )
+
+        ax2.set_xlabel("Temperature (°C)")
+        ax2.set_title("Temperature Profile")
+        ax2.grid(True)
+        ax2.invert_yaxis()
+
+        fig.tight_layout()
+
+        return fig, (ax1, ax2)
+
+    def _plot_stratigraphy_axis(
+        self,
+        ax,
+        invert_axis: bool = True,
+    ) -> None:
+        """
+        Draw the subsurface stratigraphy on an existing axis.
+        """
+
         colours = [
             "#8da0cb",
             "#fc8d62",
@@ -154,6 +219,6 @@ class Visualization:
         ax.set_title("Geological Stratigraphy")
         ax.set_xticks([])
         ax.set_xlim(0, 1)
-        ax.invert_yaxis()
 
-        return fig, ax
+        if invert_axis:
+            ax.invert_yaxis()

@@ -72,3 +72,13 @@ class TestVisualization:
 
         assert fig is not None
         assert ax is not None
+
+    def test_plot_geothermal_profile(self, model):
+        solver = HeatTransferSolver(model)
+        visualizer = Visualization(solver)
+
+        fig, (ax1, ax2) = visualizer.plot_geothermal_profile()
+
+        assert fig is not None
+        assert ax1 is not None
+        assert ax2 is not None
