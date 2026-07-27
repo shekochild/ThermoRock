@@ -105,3 +105,55 @@ class Visualization:
         ax.invert_yaxis()
 
         return fig, ax
+
+    def plot_stratigraphy(self):
+        """
+        Plot the geological stratigraphy of the subsurface model.
+
+        Returns
+        -------
+        tuple
+            Matplotlib figure and axes objects.
+        """
+
+        fig, ax = plt.subplots(figsize=(4, 8))
+
+        colours = [
+            "#8da0cb",
+            "#fc8d62",
+            "#66c2a5",
+            "#e78ac3",
+            "#a6d854",
+            "#ffd92f",
+        ]
+
+        for index, layer in enumerate(self.solver.subsurface.layers):
+            colour = colours[index % len(colours)]
+            centre_depth = (
+                layer.top_depth
+                + layer.thickness / 2
+            )
+
+            ax.barh(
+                centre_depth,
+                1,
+                height=layer.thickness,
+                color=colour,
+                edgecolor="black",
+            )
+
+            ax.text(
+                0.5,
+                centre_depth,
+                layer.rock.name,
+                ha="center",
+                va="center",
+            )
+
+        ax.set_ylabel("Depth (m)")
+        ax.set_title("Geological Stratigraphy")
+        ax.set_xticks([])
+        ax.set_xlim(0, 1)
+        ax.invert_yaxis()
+
+        return fig, ax

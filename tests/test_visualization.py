@@ -63,3 +63,12 @@ class TestVisualization:
 
         assert fig is not None
         assert ax is not None
+
+    def test_plot_stratigraphy(self, model):
+        solver = HeatTransferSolver(model)
+        visualizer = Visualization(solver)
+
+        fig, ax = visualizer.plot_stratigraphy()
+
+        assert fig is not None
+        assert ax is not None
