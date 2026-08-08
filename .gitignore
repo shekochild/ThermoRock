@@ -1,19 +1,5 @@
 # Python cache
 __pycache__/
-*.pyc
-
-# Pytest
-.pytest_cache/
-
-# Package build metadata
-*.egg-info/
-
-# Virtual environments
-.env
-.venv
-
-# Python
-__pycache__/
 *.py[cod]
 
 # Pytest
@@ -27,6 +13,7 @@ dist/
 # Virtual environments
 .venv/
 venv/
+.env
 
 # Coverage
 .coverage
@@ -36,6 +23,9 @@ htmlcov/
 .vscode/
 .idea/
 
-# OS files
+# Generated results
+results/
+
+# Operating system files
 .DS_Store
 Thumbs.db

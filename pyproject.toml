@@ -5,10 +5,36 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "thermorock"
 version = "0.1.0"
-description = "ThermoRock package"
+description = "A Python package for thermal property analysis, conductive heat transfer modelling, and geothermal resource assessment."
+readme = "README.md"
+requires-python = ">=3.10"
+
 authors = [
-    {name = "Titus Joseph"}
+    { name = "Titus Joseph" }
 ]
+
+license = { file = "LICENSE" }
+
+keywords = [
+    "geothermal",
+    "heat transfer",
+    "thermal conductivity",
+    "geoscience",
+    "computational geology",
+    "thermal modelling"
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics"
+]
+
+[project.urls]
+Homepage = "https://github.com/shekochild/ThermoRock"
+Repository = "https://github.com/shekochild/ThermoRock"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
